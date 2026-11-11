@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evaluación curricular · Modelo CIPP</title>
+<style>
+:root{
+  --ink:#1e2430;
+  --muted:#5c6572;
+  --accent:#3c5a6b;
+  --accent-soft:#eaeef0;
+  --paper:#eceae5;
+  --surface:#fdfcfa;
+  --border:#dcd9d2;
+  --header:#171b22;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif}
+button{font:inherit;cursor:pointer}
+.app{height:100dvh;min-height:590px;display:flex;flex-direction:column;max-width:1600px;margin:0 auto;background:var(--surface);box-shadow:0 0 40px rgba(20,20,16,.08)}
+header{background:var(--header);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:13px 28px;gap:10px}
+.brand{font-size:14px;font-weight:750;letter-spacing:.09em;text-transform:uppercase}
+.tag{font-size:12px;color:#aab0ba}
+.righthead{display:flex;align-items:center;gap:10px}
+.smallbtn{background:#ffffff14;border:1px solid #ffffff33;border-radius:10px;color:#fff;padding:8px 12px}
+.smallbtn:hover{background:#ffffff26}
+.stage{flex:1;min-height:0;display:flex;align-items:stretch;justify-content:center;padding:22px 38px}
+.slide{display:none;width:100%;height:100%;max-height:800px;background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:clamp(22px,4vw,65px);box-shadow:0 12px 30px rgba(20,20,16,.05);overflow:auto;flex-direction:column;justify-content:center;position:relative}
+.slide.active{display:flex}
+.eyebrow{color:var(--accent);font-size:clamp(12px,1.5vw,18px);font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin:0 0 17px}
+.slide h1{font-size:clamp(38px,5vw,78px);line-height:1.08;letter-spacing:-.03em;color:var(--ink);margin:0 0 22px}
+.slide h2{font-size:clamp(30px,3.6vw,54px);line-height:1.12;letter-spacing:-.025em;color:var(--ink);margin:0 0 23px}
+.lede{font-size:clamp(21px,2.5vw,38px);line-height:1.28;font-weight:550;max-width:1060px;margin:0 0 20px}
+.sub{font-size:clamp(16px,1.75vw,25px);line-height:1.5;color:var(--muted);margin:0}
+.em{color:var(--accent)}
+.accentline{width:88px;height:6px;background:var(--accent);border-radius:9px;margin:0 0 25px}
+.prompt{border-left:7px solid var(--accent);background:var(--accent-soft);border-radius:0 15px 15px 0;padding:22px 28px;font-size:clamp(21px,2.5vw,34px);font-weight:700;line-height:1.35;margin-top:24px}
+.chip{display:inline-block;border:1px solid var(--border);color:var(--muted);padding:7px 13px;border-radius:50px;background:var(--accent-soft);font-size:14px;font-weight:700;margin-bottom:25px}
+.case{background:var(--accent-soft);border:1px solid var(--border);border-radius:18px;padding:clamp(16px,2.5vw,30px);margin:6px 0 20px}
+.case strong{color:var(--ink)}
+.case p{font-size:clamp(20px,2.3vw,31px);line-height:1.4;margin:0}
+.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;margin-top:18px}
+.choice{border:2px solid var(--border);background:var(--surface);border-radius:16px;min-height:100px;padding:18px 24px;text-align:left;display:flex;align-items:center;gap:16px;color:var(--ink);transition:.2s}
+.choice:hover,.choice:focus-visible{border-color:var(--accent);background:var(--accent-soft)}
+.choice.selected{border-color:var(--accent);background:var(--accent-soft);box-shadow:0 0 0 3px rgba(60,90,107,.15)}
+.choice .letter{border-radius:12px;background:var(--accent-soft);color:var(--accent);width:45px;height:45px;display:grid;place-items:center;font-size:25px;font-weight:850;flex:none}
+.choice strong{font-size:clamp(18px,2vw,26px)}
+.choice small{display:block;color:var(--muted);font-size:clamp(13px,1.15vw,17px);margin-top:4px}
+.feedback{display:none;padding:17px 21px;background:var(--accent-soft);border:1px solid var(--border);border-radius:12px;margin-top:16px;font-size:clamp(16px,1.4vw,21px);line-height:1.45}
+.feedback.show{display:block}
+.question{font-size:clamp(22px,2.5vw,36px);font-weight:750;line-height:1.25;margin:0 0 17px}
+.grid4{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}
+.concept{border:1px solid var(--border);border-top:5px solid var(--accent);border-radius:15px;padding:clamp(14px,1.7vw,24px);background:var(--surface)}
+.concept .label{font-size:clamp(19px,2vw,29px);font-weight:800;margin-bottom:8px;color:var(--ink)}
+.concept p{font-size:clamp(16px,1.5vw,21px);line-height:1.4;margin:0;color:var(--muted)}
+.evidence{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
+.evidence button{border:2px solid var(--border);background:var(--surface);text-align:left;border-radius:15px;padding:24px;font-size:clamp(18px,2vw,27px);font-weight:700;color:var(--ink)}
+.evidence button:hover{border-color:var(--accent)}
+.evidence button.selected{background:var(--accent-soft);border-color:var(--accent)}
+.evidence button span{display:block;margin-top:8px;font-size:clamp(14px,1.2vw,18px);font-weight:450;color:var(--muted)}
+.reveal{background:var(--accent-soft);border:1px solid var(--border);border-radius:14px;padding:20px 25px;font-size:clamp(18px,1.7vw,24px);line-height:1.45;display:none}
+.reveal.show{display:block}
+.revealbtn{background:var(--accent);color:#fff;border:0;border-radius:11px;font-size:17px;font-weight:700;padding:14px 20px;margin:18px 0 0;align-self:flex-start}
+.takeaway{font-size:clamp(26px,3.5vw,50px);line-height:1.25;font-weight:800;color:var(--ink);margin:20px 0}
+.takeaway b{color:var(--accent)}
+.footer{background:var(--surface);border-top:1px solid var(--border);padding:11px 24px;display:flex;align-items:center;justify-content:space-between;gap:15px}
+.nav{display:flex;gap:8px}
+.nav button{border:1px solid var(--border);background:var(--surface);border-radius:10px;padding:11px 16px;font-weight:700;color:var(--ink)}
+.nav button.next{background:var(--ink);color:#fff;border-color:var(--ink)}
+button:disabled{opacity:.4;cursor:not-allowed}
+.progress{display:flex;align-items:center;gap:12px;color:var(--muted);font-weight:650;font-size:14px}
+.bar{width:min(18vw,230px);height:6px;background:var(--border);border-radius:20px;overflow:hidden}
+.bar>div{height:100%;background:var(--accent);width:0;transition:width .2s}
+.shortlist{font-size:clamp(19px,2vw,29px);line-height:1.6}
+.shortlist strong{color:var(--ink)}
+.closing{font-size:clamp(20px,2.5vw,32px);line-height:1.5;max-width:1000px}
+@media(max-width:740px){
+  .app{min-height:100dvh;height:auto}
+  .stage{padding:8px;min-height:650px}
+  .slide{min-height:650px;padding:28px 19px 48px}
+  .choices,.grid4,.evidence{grid-template-columns:1fr}
+  header{padding:12px 15px}
+  .tag{display:none}
+  .footer{padding:10px}
+  .bar{display:none}
+  .choice{min-height:75px}
+  .cover-qr{position:static;margin-top:28px;display:inline-block}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main class="app">
+<header>
+  <div>
+    <div class="brand">Evaluación curricular <span style="color:#6b7280">/</span> Modelo CIPP</div>
+    <div class="tag">Clase demostrativa · 10 minutos · Nivel doctoral</div>
+  </div>
+  <div class="righthead">
+    <button class="smallbtn" id="fullscreenBtn" title="Pantalla completa">⛶ Pantalla completa</button>
+  </div>
+</header>
+
+<section class="stage">
+<article class="slide active" data-time="Antes de empezar" data-notes="Preséntate con tu nombre. Di que esta es una muestra de 10 minutos sobre evaluación curricular, usando el modelo CIPP. Luego avanza."><div class="eyebrow">Clase demostrativa · Nivel doctoral</div><h1>Evaluación curricular</h1><h2 style="color:var(--muted);font-weight:600;margin-top:4px">Modelo CIPP de Stufflebeam</h2><div style="margin-top:48px"><p style="font-size:26px;font-weight:700;color:var(--ink);margin:0">Lidia Govea de Bustamante</p><p style="font-size:18px;color:var(--muted);margin:6px 0 0">Doctora en Educación</p></div><div class="cover-qr" style="position:absolute;bottom:56px;right:56px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px 20px;text-align:center"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAXIAAAFyAQAAAADAX2ykAAAC7ElEQVR4nO2cTYrkOBBGX4wFtZShDjBHkW9WZ+ob2EfJAzTIywKZbxaSXE6a6qLo7BwbQpuU7bcICOJXoTTxnbX88y0cnHfe+b/Kr9bWtAYOuwlgGaF/D8+Rx/kH84MkSRALUgaIBRYzI90CJEntwxnld/4rvhknm0GU6i5lqv1WE5+eKI/zj+LD8WEd668WA0EJv/Bnk9/57/CDbDqY7iCbYvkf5XH+T/lqob1I2kzLmGVEYekWCmkGiALWZ8jj/GP5QI26dQ2lafVH6Ga7vhaWCgxPkMf5x/LosPKwb0v/engnaT6b/M5/ya8BWANmI9jEZiwjdCVvtfht3Anld/5rfhk308xmsL7I3m4BmxjE8m+pmm6Z1knld/6zJeXdVmNBc309iKSC5tr9KGiO7p+vxzf9zgzSHLuSldtj12+Pzq7fi/GtIZlUaAa7a3Xumq5cfXc2+Z3//Tp0qFS98u1FlgQGAaPa9M9gSc+Qx/nH8nuaPIgk1ahbm9CpO+m+8/h7Pb7Wv/WEqGrw8KFQO5VpL4Jdvxfj99RZ+njsCXOh2XTG8+dr8nuurENCVbOqZtOlW7Lb7wX5QwcSqn8edCySPh5dv9fk47uxWEC6mdlb3kzKYFN8N4jv1pT8LHmcfyDf69+858/dXVNz6jx4/L0wfxi4ajsGHWLy3pps3vts8jv/JR9b89FsBFLejHYmvJnZOKi/e5I8zj+cNzOzw9ECsWDTGpDyZjatL70wPqf8zn+6DudHqQ/J3rlrAFom7f75avz9/AZ7rO0F70c57PH3ovzH/QXA3jJoXl/UBjZoMx3uny/JB2Cow1ZGFCxjBmJGy4iRfoBYh0K6hXI++Z3//aomalXJ64jSLfQhyvxarE9Xmp4jj/OP5e9uKERhxHcTFAwwYChVwWn2+aur85vVhtVxfrItj7+X5I/nC0l3VVHtSu6Tdn6+cEX+7v7C+iqIJYh1RPXqIFsPveur51eX483/n8F55y/L/weEAFiRF3ABrwAAAABJRU5ErkJggg==" alt="Código QR para seguir la clase" style="width:120px;height:120px;border-radius:8px;display:block"><p style="font-size:12px;color:var(--muted);margin:10px 0 0;max-width:120px;line-height:1.3">Escanea para seguir la clase desde tu celular</p></div></article>
+
+<article class="slide" data-time="0:00–1:20" data-notes="Abre con el problema. Di: 'Imaginen que integran una comisión de evaluación de un doctorado. Sus estudiantes obtienen buenas calificaciones, pero muchos terminan la tesis tarde. ¿Podemos decir que el programa funciona bien?' Espera una respuesta. No expliques CIPP todavía."><div class="eyebrow">Punto de partida</div><h1>¿Buenas notas =<br><span class="em">buen programa?</span></h1><div class="case"><p>En un doctorado, los estudiantes obtienen <strong>buenas calificaciones</strong>, pero muchos terminan sus tesis <strong>fuera del plazo previsto</strong>.</p></div><div class="prompt">¿Podemos afirmar que el programa es exitoso?</div></article>
+
+<article class="slide" data-time="1:20–2:10" data-notes="Pregunta al jurado: '¿Qué estaríamos evaluando si solo miramos las calificaciones?' Respuesta esperada: los aprendizajes individuales. Explica que el currículo requiere otras evidencias: necesidades, recursos, implementación y resultados."><div class="eyebrow">Aprendizajes vs. currículo</div><h2>Evaluar aprendizajes <span class="em">no es</span><br>evaluar el currículo</h2><div class="grid4"><div class="concept"><div class="label">Aprendizajes</div><p>¿Qué sabe o puede hacer cada estudiante?</p><p style="margin-top:12px">Ejemplo: exámenes y rúbricas</p></div><div class="concept"><div class="label">Currículo / programa</div><p>¿Qué tan pertinente y efectivo es el programa y cómo puede mejorarse?</p><p style="margin-top:12px">Ejemplo: revisión integral del doctorado</p></div></div></article>
+
+<article class="slide" data-time="2:10–4:20" data-notes="Presenta las cuatro preguntas en lugar de recitar definiciones. Contexto: ¿están bien definidos los objetivos y plazos? Insumo: ¿hay tutores suficientes? Proceso: ¿cómo funcionan asesorías y aprobaciones? Producto: ¿qué porcentaje termina a tiempo? CIPP no es una secuencia rígida; sus componentes pueden combinarse."><div class="eyebrow">El modelo CIPP</div><h2>Modelo <span class="em">CIPP</span> de Stufflebeam</h2><div class="grid4"><div class="concept"><div class="label">C · Contexto</div><p><strong>¿Qué se necesita?</strong><br>¿Son pertinentes los objetivos y plazos?</p></div><div class="concept"><div class="label">I · Insumo</div><p><strong>¿Con qué contamos?</strong><br>¿Hay tutores y recursos suficientes?</p></div><div class="concept"><div class="label">P · Proceso</div><p><strong>¿Cómo se implementa?</strong><br>¿Funcionan el seguimiento y las tutorías?</p></div><div class="concept"><div class="label">P · Producto</div><p><strong>¿Qué resultados hay?</strong><br>¿Cuántos se gradúan a tiempo?</p></div></div></article>
+
+<article class="slide" data-time="4:20–6:20" data-notes="Actividad 1. Haz que un miembro del jurado seleccione una opción, o pide levantar un dedo según la opción. Después de clic: valida su razonamiento, no anuncies una sola respuesta correcta. Producto permite constatar retrasos; Proceso ayuda a indagar mecanismos; Insumo y Contexto también importan. Haz la pregunta: '¿Por qué empezarían allí?'."><div class="eyebrow">Para discutir en el grupo</div><h2>¿Por dónde <span class="em">empezarías</span>?</h2><p class="question">El doctorado registra retrasos en la finalización de tesis. ¿Qué componente examinarías primero?</p><div class="choices" id="componentChoices"><button class="choice" data-value="contexto"><span class="letter">C</span><span><strong>Contexto</strong><small>Objetivos y necesidades</small></span></button><button class="choice" data-value="insumo"><span class="letter">I</span><span><strong>Insumo</strong><small>Recursos y tutores</small></span></button><button class="choice" data-value="proceso"><span class="letter">P</span><span><strong>Proceso</strong><small>Desarrollo de las tutorías</small></span></button><button class="choice" data-value="producto"><span class="letter">P</span><span><strong>Producto</strong><small>Resultados y tiempos</small></span></button></div><div class="feedback" id="componentFeedback" role="status" aria-live="polite"></div></article>
+
+<article class="slide" data-time="6:20–8:35" data-notes="Actividad 2. Pregunta: 'Si sospechamos que las tutorías están retrasando el avance, ¿qué evidencia recogeríamos?' Pide un clic. Contrasta opiniones frente a registros verificables. Menciona que entrevistas y encuestas complementan los registros. Haz el puente a una decisión concreta: revisar carga de tutores y establecer hitos de seguimiento."><div class="eyebrow">Buscando evidencia</div><h2>¿Qué <span class="em">evidencia</span> necesitamos?</h2><p class="question">Si sospechamos dificultades en la supervisión de tesis, ¿qué nos ayudaría más a comprobarlo?</p><div class="evidence" id="evidenceChoices"><button data-value="a">A · Una impresión general<span>«Parece que los estudiantes se demoran»</span></button><button data-value="b">B · Registros y testimonios<span>Fechas de entregas, tutorías, aprobaciones y entrevistas</span></button></div><div class="reveal" id="evidenceFeedback" role="status" aria-live="polite"></div></article>
+
+<article class="slide" data-time="8:35–9:35" data-notes="Presenta una decisión posible pero condicional: 'Si los registros muestran demoras en revisiones y tutorías, se puede ajustar el sistema de seguimiento o la distribución de tutores'. Aclara que no se debe proponer la misma solución sin datos. Pide que alguien formule una decisión alternativa."><div class="eyebrow">De la evidencia a la decisión</div><h2>De los datos a la <span class="em">mejora</span></h2><div class="shortlist"><div>1. <strong>Hallazgo:</strong> retrasos en revisiones de tesis.</div><div>2. <strong>Evidencia:</strong> registros de fechas y entrevistas.</div><div>3. <strong>Decisión posible:</strong> ajustar el seguimiento y la asignación de tutores.</div></div><p class="sub" style="margin-top:22px">La decisión se justifica <strong>solo si</strong> las evidencias respaldan el diagnóstico.</p></article>
+
+<article class="slide" data-time="9:35–10:00" data-notes="Cierra lentamente: 'El modelo CIPP no es un instrumento para etiquetar programas como buenos o malos. Es una forma sistemática de preguntar qué necesitamos, con qué contamos, cómo trabajamos y qué logramos. Así, la evaluación se convierte en una decisión de mejora fundamentada. Muchas gracias.'"><div class="eyebrow">Para cerrar</div><h2>Evaluar no es solo <span class="em">medir</span>.</h2><p class="takeaway">Es reunir evidencias para <b>tomar mejores decisiones</b>.</p><div class="accentline"></div><p class="closing">CIPP: Contexto · Insumo · Proceso · Producto</p></article>
+
+<article class="slide" data-time="Cierre" data-notes="Agradece y cede la palabra."><h1 style="text-align:center;font-size:88px;color:var(--ink)">Gracias</h1></article>
+</section>
+
+<footer class="footer">
+  <div class="progress"><span id="counter">1 / 7</span><div class="bar"><div id="progressFill"></div></div><span id="timing">0:00–1:20</span></div>
+  <div class="nav"><button id="prev" title="Flecha izquierda">← Anterior</button><button id="next" class="next" title="Flecha derecha">Siguiente →</button></div>
+</footer>
+</main>
+
+<script>
+(function(){
+const slides=[...document.querySelectorAll('.slide')];
+let i=0;
+const $=id=>document.getElementById(id);
+function show(n){
+  i=Math.min(slides.length-1,Math.max(0,n));
+  slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+  $('counter').textContent=(i+1)+' / '+slides.length;
+  $('timing').textContent=slides[i].dataset.time;
+  $('progressFill').style.width=((i+1)/slides.length*100)+'%';
+  $('prev').disabled=i===0;
+  $('next').disabled=i===slides.length-1;
+  $('noteText').textContent=slides[i].dataset.notes;
+  slides[i].scrollTop=0;
+}
+$('prev').onclick=()=>show(i-1);
+$('next').onclick=()=>show(i+1);
+$('fullscreenBtn').onclick=()=>{
+  if(document.fullscreenElement){document.exitFullscreen?.()}
+  else{document.documentElement.requestFullscreen?.()}
+};
+
+document.addEventListener('keydown',e=>{
+  if(e.target.closest('button')&&(e.key==='Enter'||e.key===' '))return;
+  if(e.key==='ArrowRight'||e.key==='PageDown'){e.preventDefault();show(i+1)}
+  if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();show(i-1)}
+  if(e.key==='Escape'&&document.fullscreenElement){document.exitFullscreen?.()}
+});
+
+const messages={
+  proceso:'Es el punto de entrada más directo: el retraso ocurre durante la implementación, así que ahí se observa primero qué pasa en tutorías, revisiones y aprobaciones.',
+  producto:'También es un punto de partida razonable: los datos de resultados (tiempos de titulación) son justamente los que suelen revelar el problema en primer lugar.',
+  insumo:'No sería el primer paso, sino una ruta a la que se llega después: si Proceso muestra demoras, ahí preguntaríamos si faltan tutores o recursos.',
+  contexto:'Es la ruta menos inmediata en este caso: los objetivos y plazos ya se definieron al diseñar el programa. Solo valdría la pena revisarlos si Proceso e Insumo no explican el retraso.'
+};
+document.querySelectorAll('#componentChoices button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#componentChoices button').forEach(x=>x.classList.remove('selected'));
+  b.classList.add('selected');
+  $('componentFeedback').textContent=messages[b.dataset.value];
+  $('componentFeedback').classList.add('show')
+});
+document.querySelectorAll('#evidenceChoices button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#evidenceChoices button').forEach(x=>x.classList.remove('selected'));
+  b.classList.add('selected');
+  const good=b.dataset.value==='b';
+  $('evidenceFeedback').innerHTML=good?'<strong>Exacto.</strong> Los registros permiten localizar demoras y las entrevistas ayudan a comprender sus causas. La decisión de mejora debe basarse en ese análisis.':'<strong>Una impresión puede abrir una pregunta, pero no basta para decidir.</strong> Necesitamos registros verificables y, si es pertinente, entrevistas para comprender las causas.';
+  $('evidenceFeedback').classList.add('show')
+});
+show(0)
+})();
+</script>
+</body>
+</html>
