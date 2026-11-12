@@ -24,6 +24,9 @@ header{background:var(--header);color:var(--ink);display:flex;align-items:center
 .righthead{display:flex;align-items:center;gap:10px}
 .smallbtn{background:#ffffff14;border:1px solid #ffffff33;border-radius:10px;color:#fff;padding:8px 12px}
 .smallbtn:hover{background:#ffffff26}
+.timerChip{background:#ffffff14;border:1px solid var(--accent);border-radius:999px;color:var(--accent);padding:8px 16px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.03em;min-width:78px;text-align:center}
+.timerChip:hover{background:#ffffff26}
+.timerChip.over{border-color:#e08a6b;color:#f2c3ae;background:rgba(224,138,107,.15)}
 .stage{flex:1;min-height:0;display:flex;align-items:stretch;justify-content:center;padding:22px 38px}
 .slide{display:none;width:100%;height:100%;max-height:800px;background:var(--bg);overflow:auto;flex-direction:column;justify-content:center;position:relative;padding:clamp(22px,4vw,65px)}
 .slide.active{display:flex}
@@ -95,6 +98,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
     <div class="tag">Clase demostrativa · 10 minutos · Nivel doctoral</div>
   </div>
   <div class="righthead">
+    <button class="timerChip" id="timerChip" title="Clic: iniciar o pausar · Doble clic: reiniciar">⏱ 0:00</button>
     <button class="smallbtn" id="fullscreenBtn" title="Pantalla completa">⛶ Pantalla completa</button>
   </div>
 </header>
@@ -150,6 +154,27 @@ $('fullscreenBtn').onclick=()=>{
   if(document.fullscreenElement){document.exitFullscreen?.()}
   else{document.documentElement.requestFullscreen?.()}
 };
+
+let timerSeconds=0,timerRunning=false,timerInterval=null;
+function formatTimer(s){const m=Math.floor(s/60),r=s%60;return m+':'+String(r).padStart(2,'0')}
+function renderTimer(){
+  $('timerChip').textContent='⏱ '+formatTimer(timerSeconds);
+  $('timerChip').classList.toggle('over',timerSeconds>=600);
+}
+$('timerChip').addEventListener('click',()=>{
+  timerRunning=!timerRunning;
+  if(timerRunning){
+    timerInterval=setInterval(()=>{timerSeconds++;renderTimer()},1000);
+  }else{
+    clearInterval(timerInterval);
+  }
+});
+$('timerChip').addEventListener('dblclick',()=>{
+  clearInterval(timerInterval);
+  timerRunning=false;
+  timerSeconds=0;
+  renderTimer();
+});
 document.addEventListener('keydown',e=>{
   if(e.target.closest('button')&&(e.key==='Enter'||e.key===' '))return;
   if(e.key==='ArrowRight'||e.key==='PageDown'){e.preventDefault();show(i+1)}
